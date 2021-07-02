@@ -1,9 +1,11 @@
+
+export type AvailableCurrencies = 'EUR' | 'USD' | 'Bitcoin' | 'SGD'
 export class Money {
     amount: number;
-    currency: string;
+    currency: AvailableCurrencies;
     inspect: string;
 
-    private readonly baseCurrency =  'EUR';
+    readonly baseCurrency = 'EUR';
     private conversionRates = {
         EUR: {
             EUR: 1,
@@ -13,26 +15,26 @@ export class Money {
         }
     };
 
-    constructor(amount: number, targetCurrency: string) {
+    constructor(amount: number, targetCurrency: AvailableCurrencies) {
         this.convertTo(amount, targetCurrency);
     }
 
-    convertTo(amount: number, targetCurrency: string) {
-        if (!amount || !targetCurrency) {
+    convertTo(amount: number, targetCurrency: AvailableCurrencies) {
+        if (amount === undefined || targetCurrency === undefined) {
             throw Error('Cannot perform conversion: Some params are missing');
         }
         const base = this.conversionRates[this.baseCurrency];
-        if (!base) {
+        if (base === undefined) {
             throw Error('Invalid base currency');
         }
         const target = base[targetCurrency];
 
-        if (!target) {
+        if (target === undefined) {
             throw Error('Invalid target currency');
         }
         const targetAmount = amount / target;
 
-        this.amount = targetAmount;
+        this.amount = parseInt(targetAmount.toFixed(2));
         this.currency = targetCurrency;
         this.inspect = `${Number(targetAmount).toFixed(2)} ${this.baseCurrency}`;
     }
@@ -43,46 +45,40 @@ export class CurrencyCalculator {
         val1: Money,
         val2: Money
     ): Money {
-        const money1 = new Money(val1.amount, val1.currency);
-        const money2 = new Money(val2.amount, val2.currency);
 
-        const sum = money1.amount + money2.amount;
 
-        return new Money(sum, money1.currency);
+        const sum = val1.amount + val2.amount;
+
+        return new Money(sum, 'EUR');
     }
 
     static subtract(
         val1: Money,
         val2: Money
     ): Money {
-        const money1 = new Money(val1.amount, val1.currency);
-        const money2 = new Money(val2.amount, val2.currency);
-
-        const sum = money1.amount - money2.amount;
-        return new Money(sum, money1.currency);
+        const sum = val1.amount - val2.amount;
+        return new Money(sum, 'EUR');
     }
 
     static multiply(
         val1: Money,
-        val2: Money
+        noOfTimes: number
     ): Money {
-        const money1 = new Money(val1.amount, val1.currency);
-        const money2 = new Money(val2.amount, val2.currency);
 
-        const sum = money1.amount * money2.amount;
-        return new Money(sum, money1.currency);
+
+        const sum = val1.amount * noOfTimes;
+        return new Money(sum, 'EUR');
     }
 
     static divide(
         val1: Money,
-        val2: Money
+        dividedBy: number
     ): Money {
-        const money1 = new Money(val1.amount, val1.currency);
-        const money2 = new Money(val2.amount, val2.currency);
+
 
         try {
-            const sum = money1.amount / money2.amount;
-            return new Money(sum, money1.currency);
+            const sum = val1.amount / dividedBy;
+            return new Money(sum, 'EUR');
         } catch (e) {
             throw Error('Error in division');
         }
@@ -92,26 +88,23 @@ export class CurrencyCalculator {
         val1: Money,
         val2: Money
     ): boolean {
-        const money1 = new Money(val1.amount, val1.currency);
-        const money2 = new Money(val2.amount, val2.currency);
-        return money1.amount === money2.amount;
+
+        return val1.amount === val2.amount;
     }
 
     static isGreater(
         val1: Money,
         val2: Money
     ): boolean {
-        const money1 = new Money(val1.amount, val1.currency);
-        const money2 = new Money(val2.amount, val2.currency);
-        return money1.amount > money2.amount;
+
+        return val1.amount > val2.amount;
     }
 
     static isLess(
         val1: Money,
         val2: Money
     ): boolean {
-        const money1 = new Money(val1.amount, val1.currency);
-        const money2 = new Money(val2.amount, val2.currency);
-        return money1.amount < money2.amount;
+
+        return val1.amount < val2.amount;
     }
 }

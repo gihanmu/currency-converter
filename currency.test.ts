@@ -1,26 +1,31 @@
-import {CurrencyCalculator, Money} from './index';
+import {AvailableCurrencies, CurrencyCalculator, Money} from './index';
 
 
 describe("Test Currency Conversion", () => {
     it('50 USD should be equal to 45.05 EUR', () => {
-        expect(new Money(50, 'USD').amount === 45.05);
+        expect(new Money(50, 'USD').amount).toBe(45);
     });
     
 
-    it('50 USD + 150 SGD should be equal to 121.90 EUR', () => {
-        expect(CurrencyCalculator.add(new Money(50, 'USD'), new Money(150, 'SGD')).amount === 12.90);
+    it('100 USD + 100 USD should be equal to 180 EUR', () => {
+        const res: Money = CurrencyCalculator.add(new Money(100, 'USD'), new Money(100, 'USD'));
+        expect(res.amount).toBe(180);
     });
 
-    it('300 USD - 10 Bitcoin  should be equal to 87.23 EUR', () => {
-        expect(CurrencyCalculator.add(new Money(300, 'USD'), new Money(10, 'Bitcoin')).amount === 87.23);
+    it('300 USD - 10 Bitcoin  should be equal to 58 EUR', () => {
+        expect(CurrencyCalculator.subtract(new Money(300, 'USD'), new Money(10, 'Bitcoin')).amount).toBe(58);
     });
 
-    it('300 USD > 10 ', () => {
-        expect(CurrencyCalculator.isGreater(new Money(300, 'USD'), new Money(10, 'Bitcoin')));
+    it('1.11 USD * 100 times  should be equal to 100 EUR', () => {
+        expect(CurrencyCalculator.multiply(new Money(1.11, 'USD'), 100).amount).toBe(100);
     });
 
-    it('100 EUR ==  110 USD ', () => {
-        expect(CurrencyCalculator.isGreater(new Money(110, 'USD'), new Money(100, 'EUR')));
+    it('200 USD / 5 times  should be equal to 100 EUR', () => {
+        expect(CurrencyCalculator.divide(new Money(200, 'USD'), 5).amount).toBe(36);
+    });
+
+    it('300 USD > 10 Bitcoin ', () => {
+        expect(CurrencyCalculator.isGreater(new Money(300, 'USD'), new Money(10, 'Bitcoin'))).toBeTruthy();
     });
     
 })
